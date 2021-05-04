@@ -60,6 +60,11 @@ public class mainMenu extends JFrame {
     private JTextField searchEquipmentENameField;
     private JButton searchEquipmentENameButton;
     private JTextArea searchEquipmentLog;
+    private JPanel addStaffPanel;
+    private JButton addMemberClearButton;
+    private JButton addStaffClearButton;
+    private JButton addEquipmentClearButton;
+    private JButton searchEquipmentClearButton;
     private Login log;
 
     private final String[] header = {"Equipment Code", "Import Quantity", "Price Each"};
@@ -82,6 +87,10 @@ public class mainMenu extends JFrame {
         if (active) {
             staffNameField.setText("Hello, " + accountManagement.getJobtitle() + " " + accountManagement.getName() + ", Staff number: " + accountManagement.getStaffNo());
         }
+    }
+
+    public void setViewManager(boolean isManager) {
+        addStaffPanel.setVisible(isManager);
     }
 
     public void setLog(Login log) {
@@ -122,6 +131,10 @@ public class mainMenu extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == addStaffButton) {
+                    if (!accountManagement.getJobtitle().equals("Manager")) {
+                        addStaffLog.setText("Only Manager can add new staff account.");
+                        return;
+                    }
                     String fname = addStaffFirstNameField.getText();
                     String lname = addStaffLastNameField.getText();
                     String phoneNum = addStaffPhoneNumField.getText();
@@ -214,21 +227,6 @@ public class mainMenu extends JFrame {
                 }
             }
         });
-        importEquipmentClearButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == importEquipmentClearButton) {
-                    importEquipmentECodeField.setText("");
-                    importEquipmentQuantityField.setText("");
-                    importEquipmentPriceEachField.setText("");
-                    importEquipmentLog.setText("");
-                    currentString = "";
-                    currentList.clear();
-                    importEquipmentResult.setText("");
-                    totalPrice = 0;
-                }
-            }
-        });
         importEquipmentImportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -260,6 +258,7 @@ public class mainMenu extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == logoutButton) {
+                    clearAll();
                     try {
                         accountManagement.logout();
                     } catch (accountException accountException) {
@@ -330,21 +329,6 @@ public class mainMenu extends JFrame {
                         }
                     }
                 }
-            }
-        });
-        addInvoiceClearButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (e.getSource() != addInvoiceClearButton) return;
-                addInvoiceMemberNoField.setText("");
-                addInvoiceEquipmentCodeField.setText("");
-                addInvoiceQuantityField.setText("");
-                addInvoiceLog.setText("");
-                addInvoiceTable.setText("");
-                addInvoiceTotalPriceText.setText("");
-                addInvoiceTotalPrice = 0;
-                addInvoiceCurrentList = "";
-                addInvoiceList.clear();
             }
         });
         addInvoiceAddButton.addActionListener(new ActionListener() {
@@ -446,6 +430,127 @@ public class mainMenu extends JFrame {
                 }
             }
         });
+        addMemberClearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == addMemberClearButton) {
+                    addMemberClear();
+                }
+            }
+        });
+        addStaffClearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == addStaffClearButton) {
+                    addStaffClear();
+                }
+            }
+        });
+        addEquipmentClearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == addEquipmentClearButton) {
+                    addEquipmentClear();
+                }
+            }
+        });
+        searchEquipmentClearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == searchEquipmentClearButton) {
+                    searchEquipmentClear();
+                }
+            }
+        });
+        addInvoiceClearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() != addInvoiceClearButton) return;
+                addInvoiceClear();
+            }
+        });
+        importEquipmentClearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == importEquipmentClearButton) {
+                    importEquipmentClear();
+                }
+            }
+        });
+        tabbedPane1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                clearAll();
+            }
+        });
+    }
+
+    private void clearAll() {
+        addMemberClear();
+        addStaffClear();
+        addEquipmentClear();
+        searchEquipmentClear();
+        addInvoiceClear();
+        importEquipmentClear();
+    }
+
+    private void addMemberClear() {
+        addMemberFirstNameField.setText("");
+        addMemberLastNameField.setText("");
+        addMemberPhoneNumField.setText("");
+        addMemberLogField.setText("");
+    }
+
+    private void addStaffClear() {
+        addStaffFirstNameField.setText("");
+        addStaffLastNameField.setText("");
+        addStaffPhoneNumField.setText("");
+        addStaffJobTitleField.setText("");
+        addStaffUernameField.setText("");
+        addStaffPasswordField.setText("");
+        addStaffVerifyPasswordField.setText("");
+        addStaffLog.setText("");
+    }
+
+    private void addEquipmentClear() {
+        addEquipmentCodeField.setText("");
+        addEquipmentNameField.setText("");
+        addEquipmentSellableButton.setSelected(true);
+        addEquipmentUnitPriceField.setText("0.0");
+        addEquipmentLog.setText("");
+    }
+
+    private void searchEquipmentClear() {
+        searchEquipmentECodeField.setText("");
+        searchEquipmentECodeField.setText("");
+        searchEquipmentInformationLog.setText("");
+        searchEquipmentENameField.setText("");
+        listEquipment.clear();
+        searchEquipmentNameList.setModel(listEquipment);
+    }
+
+    private void addInvoiceClear() {
+        addInvoiceMemberNoField.setText("");
+        addInvoiceEquipmentCodeField.setText("");
+        addInvoiceQuantityField.setText("");
+        addInvoiceLog.setText("");
+        addInvoiceTable.setText("");
+        addInvoiceTotalPriceText.setText("");
+        addInvoiceTotalPrice = 0;
+        addInvoiceCurrentList = "";
+        addInvoiceList.clear();
+    }
+
+    private void importEquipmentClear() {
+        importEquipmentECodeField.setText("");
+        importEquipmentQuantityField.setText("");
+        importEquipmentPriceEachField.setText("");
+        importEquipmentLog.setText("");
+        currentString = "";
+        currentList.clear();
+        importEquipmentResult.setText("");
+        totalPrice = 0;
     }
 
     public static void main(String[] args) {
