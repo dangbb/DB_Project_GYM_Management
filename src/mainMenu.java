@@ -65,6 +65,9 @@ public class mainMenu extends JFrame {
     private JButton addStaffClearButton;
     private JButton addEquipmentClearButton;
     private JButton searchEquipmentClearButton;
+    private JButton createInvoiceConfirmMemberNoButton;
+    private JTextField createInvoiceMemberName;
+    private JTextField createInvoiceMemberPhoneNum;
     private Login log;
 
     private final String[] header = {"Equipment Code", "Import Quantity", "Price Each"};
@@ -111,7 +114,11 @@ public class mainMenu extends JFrame {
                 String phoneNum = addMemberPhoneNumField.getText();
 
                 try {
-                    memberQuery.createMember(fname, sname, phoneNum);
+                    ResultSet prevMember = memberQuery.getMember(fname, sname, phoneNum);
+                    if (prevMember != null) {
+                        addMemberLogField.setText("Duplicated member information:");
+                    }
+                    int memberNo = memberQuery.createMember(fname, sname, phoneNum);
 
                     addMemberFirstNameField.setText("");
                     addMemberLastNameField.setText("");
@@ -120,7 +127,9 @@ public class mainMenu extends JFrame {
                     addMemberLogField.setText(
                             "Add new member" + '\n'
                             + "Name: " + fname + " " + sname + "\n"
-                            + "phone number: " + phoneNum
+                            + "phone number: " + phoneNum + "\n"
+                            + "Member number: " + memberNo + "\n"
+                            + "Please ask customer to remember Member number for future transaction."
                     );
                 } catch (memberQueryException exc) {
                     exc.printStackTrace();
@@ -354,6 +363,9 @@ public class mainMenu extends JFrame {
                     addInvoiceTotalPrice = 0;
                     addInvoiceCurrentList = "";
                     addInvoiceList.clear();
+
+                    createInvoiceMemberName.setText("");
+                    createInvoiceMemberPhoneNum.setText("");
                 } catch (invoiceQueryException invoiceQueryException) {
                     invoiceQueryException.printStackTrace();
                 }
@@ -481,7 +493,23 @@ public class mainMenu extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                clearAll();
+                clearAlmostAll();
+            }
+        });
+        createInvoiceConfirmMemberNoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    int memberNo = Integer.parseInt(addInvoiceMemberNoField.getText());
+
+                    ResultSet memberInfo = memberQuery.getMemberByMemberNo(memberNo);
+
+                    createInvoiceMemberName.setText(memberInfo.getString(3) + " " + memberInfo.getString(4));
+                    createInvoiceMemberPhoneNum.setText(memberInfo.getString(5));
+                } catch (memberQueryException | SQLException exc) {
+                    exc.printStackTrace();
+                    addInvoiceLog.setText(exc.getMessage());
+                }
             }
         });
     }
@@ -493,6 +521,13 @@ public class mainMenu extends JFrame {
         searchEquipmentClear();
         addInvoiceClear();
         importEquipmentClear();
+    }
+
+    private void clearAlmostAll() {
+        addMemberClear();
+        addStaffClear();
+        addEquipmentClear();
+        searchEquipmentClear();
     }
 
     private void addMemberClear() {
@@ -540,6 +575,9 @@ public class mainMenu extends JFrame {
         addInvoiceTotalPrice = 0;
         addInvoiceCurrentList = "";
         addInvoiceList.clear();
+
+        createInvoiceMemberName.setText("");
+        createInvoiceMemberPhoneNum.setText("");
     }
 
     private void importEquipmentClear() {
