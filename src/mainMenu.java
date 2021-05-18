@@ -225,6 +225,12 @@ public class mainMenu extends JFrame {
                     if (eCode.equals("") || importQuantity.equals("") || priceEach.equals("")) {
                         importEquipmentLog.setText("Fields must be filled.");
                     } else {
+                        for (int i = 0; i < currentList.size(); i++) {
+                            if (currentList.get(i)[0].equals(eCode)) {
+                                importEquipmentLog.setText("Duplicated Equipment");
+                                return;
+                            }
+                        }
                         currentList.add(new String[]{eCode, importQuantity, priceEach});
                         totalPrice += Float.parseFloat(priceEach) * Integer.parseInt(importQuantity);
                         importEquipmentTotalPrice.setText(String.valueOf(totalPrice));
